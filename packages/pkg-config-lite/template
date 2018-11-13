@@ -1,0 +1,22 @@
+pkgname=pkg-config-lite
+version=0.28-1
+revision=1
+download=https://sourceforge.net/projects/pkgconfiglite/files/${version}/pkg-config-lite-${version}.tar.gz
+
+function cross-compiler {
+  ./configure \
+    --prefix=/cross-tools \
+    --host=${CLFS_TARGET} \
+    --with-pc-path=/tools/lib/pkgconfig:/tools/share/pkgconfig
+  make -j${THREADS}
+  make install
+}
+
+function build {
+  ./configure \
+    --prefix=/usr \
+    --docdir=/usr/share/doc/pkg-config-$version
+
+  make -j${THREADS}
+  make install
+}

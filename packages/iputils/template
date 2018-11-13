@@ -1,0 +1,17 @@
+pkgname=iputils
+version=20151218
+revision=1
+download=http://www.skbuff.net/iputils/iputils-s${version}.tar.bz2 
+extractdir=iputils-s$version
+
+function build {
+  make -j${THREADS} TARGETS="clockdiff ping rdisc tracepath tracepath6 traceroute6"
+
+  install -v -m755 ping /bin
+  install -v -m755 clockdiff /usr/bin
+  install -v -m755 rdisc /usr/bin
+  install -v -m755 tracepath /usr/bin
+  install -v -m755 trace{path,route}6 /usr/bin
+  ln -sv ping /bin/ping4
+  ln -sv ping /bin/ping6
+}

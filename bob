@@ -1,0 +1,82 @@
+#!/bin/bash
+source ./info
+mkdir -p logs
+
+USAGE="bob [package] [section] [noclean]"
+
+if [ -z "$1" ]; then
+  echo ${USAGE}
+  exit
+elif [ -z "$2" ]; then
+  echo ${USAGE}
+  exit
+fi
+
+function download {
+  if [ "$1" == "all" ]
+  then
+    for f in ${CLFS_PACKAGES}/*; do
+      source $f/template
+      wget -c -nc -P ${CLFS_SOURCES}/$pkgname $download
+    done
+  else
+    source ${CLFS_PACKAGES}/$pkgname/template
+    wget -c -nc -P ${CLFS_SOURCES}/$pkgname $download
+  fi
+}
+
+function prepare {
+  if [ -z $2 ]; then
+    echo Cleaning $pkgname $version
+    rm -rf ${CLFS_WORK}/$pkgname/$version
+    mkdir -p ${CLFS_WORK}/$pkgname/$version
+    echo Extracting $pkgname $version
+    export type=$(file ${CLFS_SOURCES}/$pkgname/$filename | grep Zip)
+    if [ -z "$type" ]; then
+      tar -C ${CLFS_WORK}/$pkgname/$version -xf ${CLFS_SOURCES}/$pkgname/$filename
+    else
+      cd ${CLFS_WORK}/$pkgname/$version && unzip ${CLFS_SOURCES}/$pkgname/$filename && cd ${BUILD_ROOT}
+    fi
+  fi
+  if [ -z $extractdir ]; then
+    cd ${CLFS_WORK}/$pkgname/$version/$pkgname-$version
+  else
+    cd ${CLFS_WORK}/$pkgname/$version/$extractdir
+  fi
+  if [ ! -z $patches ]; then
+    for f in $(echo $patches | sed -e 's/,/ /g'); do
+      patch -p0 < ${CLFS_PACKAGES}/$pkgname/$f
+    done
+  fi
+}
+
+source ${CLFS_PACKAGES}/$2/template
+
+if [ -z $meta ]; then
+  export filename=$(echo "${download##*/}")
+  if [ ! -f ${CLFS_SOURCES}/$pkgname/$filename ]; then
+    download $2
+  fi
+
+  if [ "$1" == "download" ];
+  then
+    exit
+  fi
+
+  prepare $pkgname $3
+
+  if [ "$1" == "cross" ]; then
+    export CC="${CLFS_TARGET}-gcc"
+    export CXX="${CLFS_TARGET}-g++"
+    export AR="${CLFS_TARGET}-ar"
+    export AS="${CLFS_TARGET}-as"
+    export RANLIB="${CLFS_TARGET}-ranlib"
+    export LD="${CLFS_TARGET}-ld"
+    export STRIP="${CLFS_TARGET}-strip"
+    $1 2>&1 | tee ${BUILD_ROOT}/logs/$2-$version-$1.log
+  else
+    $1 2>&1 | tee ${BUILD_ROOT}/logs/$2-$version-$1.log
+  fi
+else
+  $1
+fi

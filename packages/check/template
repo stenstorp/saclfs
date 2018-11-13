@@ -1,0 +1,14 @@
+pkgname=check
+version=0.12.0
+revision=1
+download=https://github.com/libcheck/check/releases/download/${version}/check-${version}.tar.gz
+
+function cross {
+  ./configure \
+    --prefix=/tools \
+    --build=${CLFS_HOST} \
+    --host=${CLFS_TARGET}
+
+  make -j${THREADS}
+  make install
+}

@@ -1,0 +1,95 @@
+name=base-system
+revision=1
+meta=yes
+
+function build {
+  cd ${BUILD_ROOT}
+
+  ./bob build test-tools
+  ./bob build linux-headers
+  ./bob build man-pages
+  ./bob build tzdata
+  ./bob build m4
+  ./bob build bison
+  ./bob build glibc
+  
+gcc -dumpspecs | \
+perl -p -e 's@/tools/lib/ld@/lib/ld@g;' \
+     -e 's@\*startfile_prefix_spec:\n@$_/usr/lib/ @g;' > \
+     $(dirname $(gcc --print-libgcc-file-name))/specs
+
+  ./bob build gmp
+  ./bob build mpfr
+  ./bob build mpc
+  ./bob build isl
+  ./bob build zlib
+  ./bob build flex
+  ./bob build binutils
+  ./bob build gcc
+  ./bob build attr
+  ./bob build acl
+  ./bob build libcap
+  ./bob build sed
+  ./bob build pkg-config-lite
+  ./bob build ncurses
+  ./bob build shadow
+  ./bob pass1 util-linux
+  ./bob build procps-ng
+  ./bob build e2fsprogs
+  ./bob build coreutils
+  ./bob build iana-etc
+  ./bob build libtool
+  ./bob build iproute2
+  ./bob build bzip2
+  ./bob build gdbm
+  ./bob build perl
+  ./bob build readline
+  ./bob build autoconf
+  ./bob build automake
+  ./bob build bash
+  ./bob build bc
+  ./bob build diffutils
+  ./bob build file
+  ./bob build gawk
+  ./bob build findutils
+  ./bob build gettext
+  ./bob build gperf
+  ./bob build grep
+  ./bob build groff
+  ./bob build less
+  ./bob build gzip
+  ./bob build iputils
+  ./bob build kbd
+  ./bob build libpipeline
+  ./bob build man-db
+  ./bob build make
+  ./bob build xz
+  ./bob build expat
+  ./bob build XML-Parser
+  ./bob build intltool
+  ./bob build kmod
+  ./bob build patch
+  ./bob build psmisc
+  ./bob build dbus
+  ./bob build tar
+  ./bob build texinfo
+  ./bob build util-linux
+  ./bob build libffi
+  ./bob build openssl
+  ./bob build python3
+  ./bob build ninja
+  ./bob build meson
+  ./bob build libxml2
+  ./bob build libxslt
+  ./bob build unzip
+  ./bob build docbook-xsl
+  ./bob build docbook-xml
+  ./bob build systemd
+  ./bob build vim
+  ./bob build hfsutils
+  ./bob build parted
+  ./bob build powerpc-utils
+  ./bob build clfs-network-scripts
+  ./bob build dhcpcd
+  ./bob build linux
+}

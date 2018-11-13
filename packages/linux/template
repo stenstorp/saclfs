@@ -1,0 +1,28 @@
+pkgname=linux
+version=4.19.1
+revision=1
+download=https://cdn.kernel.org/pub/linux/kernel/v$(echo $version | cut -b 1).x/linux-${version}.tar.xz 
+patches=ppc32ptrace.patch
+
+function cross {
+  make mrproper
+  cp ${CLFS_PACKAGES}/linux/config .config
+  make -j${THREADS} ARCH=${CLFS_ARCH} CROSS_COMPILE=${CLFS_TARGET}-
+  make ARCH=${CLFS_ARCH} CROSS_COMPILE=${CLFS_TARGET}- \
+    INSTALL_MOD_PATH=/tools modules_install
+
+  mkdir -pv /tools/boot
+  cp -v vmlinux /tools/boot/vmlinux-$version
+  cp -v System.map /tools/boot/System.map-$version
+  cp -v .config /tools/boot/config-$version
+}
+
+function build {
+  make mrproper
+  cp ${CLFS_PACKAGES}/linux/config .config
+  make -j${THREADS}
+  make modules_install
+  cp vmlinux /boot/vmlinux-$version
+  cp -v System.map /boot/System.map-$version
+  cp -v .config /boot/config-$version
+}

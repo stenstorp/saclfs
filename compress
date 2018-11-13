@@ -1,0 +1,22 @@
+#!/bin/bash
+source ./info
+
+echo Creating Backup
+cp -a ${CLFS} ${CLFS}-BAK
+mkdir -p ${CLFS}/root/builder/{packages,sources}
+echo Copying Packages
+cp -a ${CLFS_PACKAGES} ${CLFS}/root/builder/
+echo Copying Sources
+cp -a ${CLFS_SOURCES} ${CLFS}/root/builder/
+echo Copying Scripts
+cp -a ${BUILD_ROOT}/{bob,info,post-base} ${CLFS}/root/builder
+
+cd ${CLFS}
+echo Removing Cross Tools
+rm -rf cross-tools
+echo Compressing...
+sudo XZ_OPT="--threads=${THREADS}" tar cfJ ../clfs.tar.xz *
+
+echo Restoring Backup
+rm -rf ${CLFS}
+mv ${CLFS}-BAK ${CLFS}

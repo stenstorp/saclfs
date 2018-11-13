@@ -1,0 +1,38 @@
+pkgname=isl
+version=0.20
+revision=1
+download=http://isl.gforge.inria.fr/isl-${version}.tar.xz
+
+function cross-compiler {
+  LDFLAGS="-Wl,-rpath,/cross-tools/lib" \
+  ./configure \
+    --prefix=/cross-tools \
+    --disable-static \
+    --with-gmp-prefix=/cross-tools
+
+  make -j${THREADS}
+  make install
+}
+
+function cross {
+  ./configure \
+    --prefix=/tools \
+    --build=${CLFS_HOST} \
+    --host=${CLFS_TARGET}
+
+  make -j${THREADS}
+  make install
+}
+
+function build {
+  CC="gcc -isystem /usr/include" \
+  LDFLAGS="-Wl,-rpath-link,/usr/lib:/lib" \
+  ./configure \
+    --prefix=/usr
+
+  make -j${THREADS}
+  make install
+
+  mkdir -p /usr/share/gdb/auto-load/usr/lib
+  mv /usr/lib/libisl*gdb.py /usr/share/gdb/auto-load/usr/lib
+}

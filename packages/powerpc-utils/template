@@ -1,0 +1,18 @@
+pkgname=powerpc-utils
+version=1.1.3
+revision=1
+download=http://http.debian.net/debian/pool/main/p/powerpc-utils/powerpc-utils_${version}.orig.tar.gz
+patches=newworld.patch
+extractdir=pmac-utils
+
+function cross {
+  echo $(pwd)
+  ${CC} -o nvsetenv nvsetenv.c nwnvsetenv.c
+  install -v -m755 nvsetenv /tools/sbin
+}
+
+function build {
+  make -j${THREADS} nvsetenv nvsetvol
+  install -v -m755 nvsetenv nvsetvol /usr/sbin
+  install -v -m644 nvsetenv.8 nvsetvol.8 /usr/share/man/man8
+}

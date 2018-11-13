@@ -1,0 +1,52 @@
+pkgname=sysvinit
+version=2.91
+revision=1
+download=http://download.savannah.nongnu.org/releases/sysvinit/sysvinit-${version}.tar.xz
+patches=clfs.patch
+
+function cross {
+  make -j${THREADS} -C src clobber
+  make -j${THREADS} -C src CC="${CC}"
+  make -C src ROOT=/tools install
+
+cat > /tools/etc/inittab << "END"
+# Begin /tools/etc/inittab
+
+id:3:initdefault:
+
+si::sysinit:/tools/etc/rc.d/init.d/rc sysinit
+
+l0:0:wait:/tools/etc/rc.d/init.d/rc 0
+l1:S1:wait:/tools/etc/rc.d/init.d/rc 1
+l2:2:wait:/tools/etc/rc.d/init.d/rc 2
+l3:3:wait:/tools/etc/rc.d/init.d/rc 3
+l4:4:wait:/tools/etc/rc.d/init.d/rc 4
+l5:5:wait:/tools/etc/rc.d/init.d/rc 5
+l6:6:wait:/tools/etc/rc.d/init.d/rc 6
+
+ca:12345:ctrlaltdel:/tools/sbin/shutdown -t1 -a -r now
+
+su:S016:once:/tools/sbin/sulogin
+
+END
+
+cat >> /tools/etc/inittab << "END"
+1:2345:respawn:/tools/sbin/agetty --noclear -I '\033(K' tty1 9600
+2:2345:respawn:/tools/sbin/agetty --noclear -I '\033(K' tty2 9600
+3:2345:respawn:/tools/sbin/agetty --noclear -I '\033(K' tty3 9600
+4:2345:respawn:/tools/sbin/agetty --noclear -I '\033(K' tty4 9600
+5:2345:respawn:/tools/sbin/agetty --noclear -I '\033(K' tty5 9600
+6:2345:respawn:/tools/sbin/agetty --noclear -I '\033(K' tty6 9600
+
+END
+
+cat >> /tools/etc/inittab << "END"
+c0:12345:respawn:/tools/sbin/agetty --noclear 115200 ttyS0 vt100
+
+END
+
+cat >> /tools/etc/inittab << "END"
+# End /tools/etc/inittab
+END
+
+}

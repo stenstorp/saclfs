@@ -1,0 +1,11 @@
+pkgname=dejagnu
+version=1.6.1
+revision=1
+download=https://ftp.gnu.org/gnu/dejagnu/dejagnu-${version}.tar.gz
+
+function testtools {
+  ./configure \
+    --prefix=/tools
+
+  make install
+}

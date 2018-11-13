@@ -1,0 +1,16 @@
+pkgname=boot-scripts-cross-lfs
+version=3.0-20140710
+revision=1
+download=http://clfs.org/files/packages/git/boot-scripts-cross-lfs-${version}.tar.xz 
+
+function cross {
+  make DESTDIR=/tools install-boot-scripts
+
+cat > /tools/etc/sysconfig/clock << "END"
+# Begin /tools/etc/sysconfig/clock
+
+UTC=1
+
+# End /tools/etc/sysconfig/clock
+END
+}

@@ -1,0 +1,22 @@
+pkgname=patch
+version=2.7.6
+revision=1
+download=https://ftp.gnu.org/gnu/patch/patch-${version}.tar.xz
+
+function cross {
+  ./configure \
+    --prefix=/tools \
+    --build=${CLFS_HOST} \
+    --host=${CLFS_TARGET}
+
+  make -j${THREADS}
+  make install
+}
+
+function build {
+  ./configure \
+    --prefix=/usr
+
+  make -j${THREADS}
+  make install
+}

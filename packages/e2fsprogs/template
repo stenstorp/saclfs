@@ -1,0 +1,42 @@
+pkgname=e2fsprogs
+version=1.44.4
+revision=1
+download=https://mirrors.edge.kernel.org/pub/linux/kernel/people/tytso/e2fsprogs/v${version}/e2fsprogs-${version}.tar.xz
+
+function cross {
+  mkdir build
+  cd build
+
+  ../configure \
+    --prefix=/tools \
+    --enable-elf-shlibs \
+    --build=${CLFS_HOST} \
+    --host=${CLFS_TARGET} \
+    --disable-libblkid \
+    --disable-libuuid \
+    --disable-fsck \
+    --disable-uuidd
+
+  make -j${THREADS}
+  make install
+  make install-libs
+}
+
+function build {
+  mkdir build
+  cd build
+
+  ../configure \
+    --prefix=/usr \
+    --bindir=/bin \
+    --with-root-prefix="" \
+    --enable-elf-shlibs \
+    --disable-libblkid \
+    --disable-libuuid \
+    --disable-fsck \
+    --disable-uuidd
+
+  make -j${THREADS}
+  make install
+  make install-libs
+}

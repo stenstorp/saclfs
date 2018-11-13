@@ -1,0 +1,12 @@
+diff --git a/libparted/arch/linux.c b/libparted/arch/linux.c
+index 31b98ab..7e86b51 100644
+--- libparted/arch/linux.c
++++ libparted/arch/linux.c
+@@ -41,6 +41,7 @@
+ #include <sys/utsname.h>        /* for uname() */
+ #include <scsi/scsi.h>
+ #include <assert.h>
++#include <sys/sysmacros.h>
+ #ifdef ENABLE_DEVICE_MAPPER
+ #include <libdevmapper.h>
+ #endif

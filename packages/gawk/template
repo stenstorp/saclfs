@@ -1,0 +1,28 @@
+pkgname=gawk
+version=4.2.1
+revision=1
+download=https://ftp.gnu.org/gnu/gawk/gawk-${version}.tar.xz
+
+function cross {
+  ./configure \
+    --prefix=/tools \
+    --build=${CLFS_HOST} \
+    --host=${CLFS_TARGET}
+
+  make -j${THREADS}
+  make install
+  mkdir -p ${CLFS}/usr/bin
+  ln -sf /tools/bin/gawk ${CLFS}/usr/bin/awk
+}
+
+function build {
+  ./configure \
+    --prefix=/usr \
+    --libexecdir=/usr/lib
+
+  make -j${THREADS}
+  make install
+
+  mkdir /usr/share/doc/gawk-$version
+  cp doc/{awkforai.txt,*.{eps,pdf,jpg}} /usr/share/doc/gawk-$version
+}

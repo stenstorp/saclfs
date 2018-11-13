@@ -1,0 +1,15 @@
+#!/bin/bash
+source ./info
+
+echo Removing Old Archive
+rm clfs.tar.xz
+echo Removing Old Logs
+rm -rf logs/*
+echo Removing Tools
+rm /tools
+echo Removing Cross tools
+rm /cross-tools
+echo Removing Build
+rm -rf ${CLFS}
+echo Removing Work
+rm -rf ${CLFS_WORK}/*

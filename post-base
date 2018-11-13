@@ -1,0 +1,101 @@
+#!/bin/bash
+cat > /etc/adjtime << "EOF"
+0.0 0 0.0
+0
+LOCAL
+EOF
+
+cat > /etc/profile << "EOF"
+# Begin /etc/profile
+
+source /etc/locale.conf
+
+for f in /etc/bash_completion.d/*
+do
+  if [ -e ${f} ]; then source ${f}; fi
+done
+unset f
+
+export INPUTRC=/etc/inputrc
+
+# End /etc/profile
+EOF
+
+cat > /etc/inputrc << "EOF"
+# Begin /etc/inputrc
+# Modified by Chris Lynn <roryo@roryo.dynup.net>
+
+# Allow the command prompt to wrap to the next line
+set horizontal-scroll-mode Off
+
+# Enable 8bit input
+set meta-flag On
+set input-meta On
+
+# Turns off 8th bit stripping
+set convert-meta Off
+
+# Keep the 8th bit for display
+set output-meta On
+
+# none, visible or audible
+set bell-style none
+
+# All of the following map the escape sequence of the
+# value contained inside the 1st argument to the
+# readline specific functions
+
+"\eOd": backward-word
+"\eOc": forward-word
+
+# for linux console
+"\e[1~": beginning-of-line
+"\e[4~": end-of-line
+"\e[5~": beginning-of-history
+"\e[6~": end-of-history
+"\e[3~": delete-char
+"\e[2~": quoted-insert
+
+# for xterm
+"\eOH": beginning-of-line
+"\eOF": end-of-line
+
+# for Konsole
+"\e[H": beginning-of-line
+"\e[F": end-of-line
+
+# End /etc/inputrc
+EOF
+
+echo "clfs" > /etc/hostname
+
+cat > /etc/hosts << "EOF"
+# Begin /etc/hosts (network card version)
+
+127.0.0.1 localhost
+::1       localhost
+
+# End /etc/hosts (network card version)
+EOF
+
+cat > /etc/resolv.conf << "EOF"
+# Begin /etc/resolv.conf
+
+nameserver 192.168.1.1
+
+# End /etc/resolv.conf
+EOF
+
+cd /etc/systemd/network &&
+cat > dhcp.network << "EOF"
+[Match]
+Name=enp2s0
+
+[Network]
+DHCP=yes
+EOF
+
+ln -sv /run/systemd/network/resolv.conf /etc
+
+/tools/bin/find /{,usr/}{bin,lib,sbin} -type f \
+   -exec /tools/bin/strip --strip-debug '{}' ';'

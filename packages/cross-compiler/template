@@ -1,0 +1,22 @@
+name=cross-compiler
+revision=1
+meta=yes
+
+function build {
+  cd ${BUILD_ROOT}
+  ./bob cross-compiler file && \
+  ./bob cross-compiler linux-headers && \
+  ./bob cross-compiler m4 && \
+  ./bob cross-compiler ncurses && \
+  ./bob cross-compiler pkg-config-lite && \
+  ./bob cross-compiler gmp && \
+  ./bob cross-compiler mpfr && \
+  ./bob cross-compiler mpc && \
+  ./bob cross-compiler isl && \
+  ./bob cross-compiler binutils && \
+  ./bob cross-compiler-static gcc && \
+  ./bob cross-compiler glibc && \
+  ./bob cross-compiler-final gcc
+}
+
+

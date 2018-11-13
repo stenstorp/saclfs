@@ -1,0 +1,25 @@
+diff --git a/arch/powerpc/kernel/ptrace.c b/arch/powerpc/kernel/ptrace.c
+index 9667666eb18e..607273067d3f 100644
+--- arch/powerpc/kernel/ptrace.c
++++ arch/powerpc/kernel/ptrace.c
+@@ -570,7 +570,8 @@ static int vr_get(struct task_struct *target, const struct user_regset *regset,
+ 		vrsave.word = target->thread.vrsave;
+ 
+ 		ret = user_regset_copyout(&pos, &count, &kbuf, &ubuf, &vrsave,
+-					  33 * sizeof(vector128), -1);
++					  33 * sizeof(vector128),
++					  34 * sizeof(vector128));
+ 	}
+ 
+ 	return ret;
+@@ -617,7 +618,8 @@ static int vr_set(struct task_struct *target, const struct user_regset *regset,
+ 		vrsave.word = target->thread.vrsave;
+ 
+ 		ret = user_regset_copyin(&pos, &count, &kbuf, &ubuf, &vrsave,
+-					 33 * sizeof(vector128), -1);
++					 33 * sizeof(vector128),
++					 34 * sizeof(vector128));
+ 		if (!ret)
+ 			target->thread.vrsave = vrsave.word;
+ 	}
+

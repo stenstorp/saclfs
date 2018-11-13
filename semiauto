@@ -1,0 +1,6 @@
+#!/bin/bash
+./reset-all
+./bob build cross-compiler
+./bob build cross-system
+./bob download all
+./buildrootfs

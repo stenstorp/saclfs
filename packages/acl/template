@@ -1,0 +1,23 @@
+pkgname=acl
+version=2.2.53
+revision=1
+download=http://download.savannah.nongnu.org/releases/acl/acl-${version}.tar.gz
+
+function build {
+  sed -i -e "/TABS-1;/a if (x > (TABS-1)) x = (TABS-1);" libacl/__acl_to_any_text.c
+  #sed -i -e 's|/@pkg_name@|&-@pkg_version@|' include/builddefs.in
+  sed -i "s:| sed.*::g" test/{sbits-restore,cp,misc}.test
+
+  ./configure \
+    --prefix=/usr \
+    --libexecdir=/usr/lib
+
+  make -j${THREADS}
+  #make install install-dev install-lib
+  make install
+
+  mv /usr/lib/libacl.so.* /lib
+  ln -sf ../../lib/libacl.so.1 /usr/lib/libacl.so
+
+  chmod 755 -v /lib/libacl.so.*
+}

@@ -1,0 +1,23 @@
+pkgname=hfsutils
+version=3.2.6
+revision=1
+download=ftp://ftp.mars.org/pub/hfs/hfsutils-${version}.tar.gz
+patches=errno.patch
+
+function cross {
+  CC="${CC}" \
+  ./configure \
+    --prefix=/tools
+
+  make -j${THREADS}
+  make install
+}
+
+function build {
+  ./configure \
+    --prefix=/usr \
+    --mandir=/usr/share/man
+
+  make -j${THREADS}
+  make install
+}

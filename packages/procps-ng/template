@@ -1,0 +1,19 @@
+pkgname=procps-ng
+version=3.3.15
+revision=1
+download=https://sourceforge.net/projects/procps-ng/files/Production/procps-ng-${version}.tar.xz
+
+function build {
+  ./configure \
+    --prefix=/usr \
+    --exec-prefix= \
+    --libdir=/usr/lib \
+    --docdir=/usr/share/doc/procps-ng-$version \
+    --disable-kill
+
+  make -j${THREADS}
+  make install
+
+  mv /usr/lib/libprocps.so.* /lib
+  ln -sf ../../lib/$(readlink /usr/lib/libprocps.so) /usr/lib/libprocps.so
+}

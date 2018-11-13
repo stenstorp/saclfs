@@ -1,0 +1,27 @@
+pkgname=xz
+version=5.2.4
+revision=1
+download=https://tukaani.org/xz/xz-${version}.tar.xz
+
+function cross {
+  ./configure \
+    --prefix=/tools \
+    --build=${CLFS_HOST} \
+    --host=${CLFS_TARGET}
+
+  make -j${THREADS}
+  make install
+}
+
+function build {
+  ./configure \
+    --prefix=/usr \
+    --docdir=/usr/share/doc/xz-$version
+
+  make -j${THREADS}
+  make install
+
+  mv /usr/bin/{xz,lzma,lzcat,unlzma,unxz,xzcat} /bin
+  mv /usr/lib/liblzma.so.* /lib
+  ln -sf ../../lib/$(readlink /usr/lib/liblzma.so) /usr/lib/liblzma.so
+}

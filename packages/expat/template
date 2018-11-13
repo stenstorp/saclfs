@@ -1,0 +1,15 @@
+pkgname=expat
+version=2.2.6
+revision=1
+download=https://github.com/libexpat/libexpat/releases/download/R_$(echo $version | sed -e 's/\./_/g')/expat-${version}.tar.bz2
+
+function build {
+  ./configure \
+    --prefix=/usr
+
+  make -j${THREADS}
+  make install
+
+  install -v -m755 -d /usr/share/doc/expat-$version
+  install -v -m644 doc/*.{html,png,css} /usr/share/doc/expat-$version
+}

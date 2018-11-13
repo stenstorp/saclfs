@@ -1,0 +1,10 @@
+pkgname=openssl
+version=1.1.1
+revision=1
+download=https://www.openssl.org/source/openssl-$version.tar.gz
+
+function build {
+  ./config --prefix=/usr
+  make -j${THREADS}
+  make install
+}

@@ -1,0 +1,8 @@
+pkgname=clfs-network-scripts
+version=20140224
+revision=1
+download=http://clfs.org/files/clfs-network-scripts-${version}.tar.xz
+
+function build {
+  make install
+}

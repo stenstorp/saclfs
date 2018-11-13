@@ -1,0 +1,13 @@
+pkgname=automake
+version=1.16
+revision=1
+download=https://ftp.gnu.org/gnu/automake/automake-${version}.tar.xz
+
+function build {
+  ./configure \
+    --prefix=/usr \
+    --docdir=/usr/share/doc/automake-$version
+
+  make -j${THREADS}
+  make install
+}

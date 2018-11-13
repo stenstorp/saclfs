@@ -1,0 +1,76 @@
+pkgname=vim
+version=8.0.586
+revision=1
+download=http://ftp.vim.org/pub/vim/unix/vim-${version}.tar.bz2
+extractdir=vim80
+
+function cross {
+
+cat > src/auto/config.cache << "END"
+vim_cv_getcwd_broken=no
+vim_cv_memmove_handles_overlap=yes
+vim_cv_stat_ignores_slash=no
+vim_cv_terminfo=yes
+vim_cv_toupper_broken=no
+vim_cv_tty_group=world
+vim_cv_tgent=zero
+END
+
+  echo '#define SYS_VIMRC_FILE "/tools/etc/vimrc"' >> src/feature.h
+
+  ./configure \
+    --build=${CLFS_HOST} \
+    --host=${CLFS_TARGET} \
+    --prefix=/tools \
+    --enable-gui=no \
+    --disable-gtktest \
+    --disable-xim \
+    --disable-gpm \
+    --without-x \
+    --disable-netbeans \
+    --with-tlib=ncurses
+
+  make -j${THREADS}
+  make -j1 install
+
+  rm /tools/bin/vi
+  ln -sv vim /tools/bin/vi
+
+cat > /tools/etc/vimrc << "END"
+" Begin /tools/etc/vimrc
+
+set nocompatible
+set backspace=2
+set ruler
+syntax on
+
+" End /tools/etc/vimrc
+END
+
+}
+
+function build {
+  echo '#define SYS_VIMRC_FILE "/etc/vimrc"' >> src/feature.h
+  ./configure \
+    --prefix=/usr
+
+  make -j${THREADS}
+  make -j1 install
+
+  ln -s vim /usr/bin/vi
+  ln -s ../vim/vim0597/doc /usr/share/doc/vim-$version
+
+cat > /etc/vimrc << "END"
+" Begin /etc/vimrc
+
+set nocompatible
+set backspace=2
+set ruler
+syntax on
+if (&term == "iterm") || (&term == "putty")
+  set background=dark
+endif
+
+" End /etc/vimrc
+END
+}

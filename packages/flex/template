@@ -1,0 +1,15 @@
+pkgname=flex
+version=2.6.4
+revision=1
+download=https://github.com/westes/flex/releases/download/v${version}/flex-${version}.tar.gz
+
+function build {
+  ./configure \
+    --prefix=/usr \
+    --docdir=/usr/share/doc/flex-$version
+
+  make -j${THREADS}
+  make install
+
+  ln -sv flex /usr/bin/lex
+}

@@ -1,0 +1,12 @@
+pkgname=groff
+version=1.22.3
+revision=1
+download=https://ftp.gnu.org/gnu/groff/groff-${version}.tar.gz
+
+function build {
+  PAGE=A4 ./configure \
+    --prefix=/usr
+
+  make -j${THREADS}
+  make install
+}

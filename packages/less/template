@@ -1,0 +1,15 @@
+pkgname=less
+version=530
+revision=1
+download=http://www.greenwoodsoftware.com/less/less-${version}.tar.gz
+
+function build {
+  ./configure \
+    --prefix=/usr \
+    --sysconfdir=/etc
+
+  make -j${THREADS}
+  make install
+
+  mv -v /usr/bin/less /bin
+}

@@ -1,0 +1,29 @@
+pkgname=zlib
+version=1.2.11
+revision=1
+download=https://www.zlib.net/zlib-${version}.tar.gz
+
+function cross {
+  ./configure \
+    --prefix=/tools
+
+  make -j${THREADS}
+  make install
+}
+
+function build {
+  CC="gcc -isystem /usr/include" \
+  CXX="g++ -isystem /usr/include" \
+  LDFLAGS="-Wl,-rpath-link,/usr/lib:/lib" \
+  ./configure \
+    --prefix=/usr
+
+  make -j${THREADS}
+  make install
+
+  mv /usr/lib/libz.so.* /lib
+  ln -sf ../../lib/$(readlink /usr/lib/libz.so) /usr/lib/libz.so
+
+  mkdir -p /usr/share/doc/zlib-$version
+  cp -r doc/* examples /usr/share/doc/zlib-$version
+}

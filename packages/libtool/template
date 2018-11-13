@@ -1,0 +1,12 @@
+pkgname=libtool
+version=2.4.6
+revision=1
+download=https://ftp.gnu.org/gnu/libtool/libtool-${version}.tar.xz
+
+function build {
+  ./configure \
+    --prefix=/usr
+
+  make -j${THREADS}
+  make install
+}

@@ -1,0 +1,26 @@
+pkgname=sed
+version=4.5
+revision=1
+download=https://ftp.gnu.org/gnu/sed/sed-${version}.tar.xz
+
+function cross {
+  ./configure \
+    --prefix=/tools \
+    --build=${CLFS_HOST} \
+    --host=${CLFS_TARGET}
+
+  make -j${THREADS}
+  make install
+}
+
+function build {
+  ./configure \
+    --prefix=/usr \
+    --bindir=/bin \
+    --docdir=/usr/share/doc/sed-$version
+
+  make -j${THREADS}
+  make -j${THREADS} html
+  make install
+  make install-html-am
+}

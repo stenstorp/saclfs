@@ -1,0 +1,11 @@
+name=test-tools
+revision=1
+meta=yes
+
+function build {
+  cd ${BUILD_ROOT}
+  ./bob testtools tcl
+  ./bob testtools expect
+  ./bob testtools dejagnu
+  ./bob testtools perl
+}

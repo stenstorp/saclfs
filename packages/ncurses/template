@@ -1,0 +1,54 @@
+pkgname=ncurses
+version=6.1
+revision=1
+download=https://ftp.gnu.org/gnu/ncurses/ncurses-${version}.tar.gz
+
+function cross-compiler {
+  AWK=gawk ./configure \
+    --prefix=/cross-tools \
+    --without-debug
+
+  make -j${THREADS} -C include
+  make -j${THREADS} -C progs tic
+  install -v -m755 progs/tic /cross-tools/bin
+}
+
+function cross {
+  ./configure \
+    --prefix=/tools \
+    --with-shared \
+    --build=${CLFS_HOST} \
+    --host=${CLFS_TARGET} \
+    --without-debug \
+    --disable-stripping \
+    --without-ada \
+    --enable-overwrite \
+    --with-build-cc=gcc
+
+  make -j${THREADS}
+  make install
+}
+
+function build {
+  ./configure \
+    --prefix=/usr \
+    --with-shared \
+    --without-debug \
+    --enable-widec \
+    --enable-pc-files
+
+  make -j${THREADS}
+  make install
+
+  for lib in ncurses form panel menu ; do
+        echo "INPUT(-l${lib}w)" > /usr/lib/lib${lib}.so
+        ln -sf lib${lib}w.a /usr/lib/lib${lib}.a
+  done
+  ln -sf libncurses++w.a /usr/lib/libncurses++.a
+  ln -sf ncursesw6-config /usr/bin/ncurses6-config
+
+  mv /usr/lib/libncursesw.so.* /lib
+  ln -sf ../../lib/$(readlink /usr/lib/libncursesw.so) /usr/lib/libncursesw.so
+
+  ln -sf /lib/libncursesw.so.6 /lib/libncurses.so.6
+}

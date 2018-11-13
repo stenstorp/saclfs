@@ -1,0 +1,15 @@
+pkgname=psmisc
+version=23.2
+revision=1
+download=https://sourceforge.net/projects/psmisc/files/psmisc/psmisc-${version}.tar.xz
+
+function build {
+  ./configure \
+    --prefix=/usr
+
+  make -j${THREADS}
+  make install
+
+  mv /usr/bin/fuser /bin
+  mv /usr/bin/killall /bin
+}

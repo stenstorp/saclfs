@@ -1,0 +1,17 @@
+pkgname=linux
+version=4.19.1
+revision=1
+download=https://cdn.kernel.org/pub/linux/kernel/v$(echo $version | cut -b 1).x/linux-${version}.tar.xz 
+
+function cross-compiler {
+  make mrproper
+  make ARCH=${CLFS_ARCH} headers_check
+  make ARCH=${CLFS_ARCH} INSTALL_HDR_PATH=/tools headers_install
+}
+
+function build {
+  make mrproper
+  make headers_check
+  make INSTALL_HDR_PATH=/usr headers_install
+  find /usr/include -name .install -or -name ..install.cmd | xargs rm -fv
+}

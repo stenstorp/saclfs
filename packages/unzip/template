@@ -1,0 +1,11 @@
+pkgname=unzip
+version=60
+revision=1
+download=https://downloads.sourceforge.net/infozip/unzip$version.tar.gz
+extractdir=unzip$version
+
+function build {
+  make -j${THREADS} -f unix/Makefile generic
+  make prefix=/usr MANDIR=/usr/share/man/man1 \
+ -f unix/Makefile install
+}

@@ -1,0 +1,27 @@
+pkgname=diffutils
+version=3.6
+revision=1
+download=https://ftp.gnu.org/gnu/diffutils/diffutils-${version}.tar.xz
+
+function cross {
+  ./configure \
+    --prefix=/tools \
+    --build=${CLFS_HOST} \
+    --host=${CLFS_TARGET}
+
+  sed -i '/rpl_$/d' lib/config.h
+  make -j${THREADS}
+  make install
+}
+
+function build {
+  sed -i 's:= @mkdir_p@:= /bin/mkdir -p:' po/Makefile.in.in
+
+  ./configure \
+    --prefix=/usr
+
+  sed -i 's@\(^#define DEFAULT_EDITOR_PROGRAM \).*@\1"vi"@' lib/config.h
+
+  make -j${THREADS}
+  make install
+}

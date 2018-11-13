@@ -1,0 +1,24 @@
+pkgname=grep
+version=3.1
+revision=1
+download=https://ftp.gnu.org/gnu/grep/grep-${version}.tar.xz
+
+function cross {
+  ./configure \
+    --prefix=/tools \
+    --build=${CLFS_HOST} \
+    --host=${CLFS_TARGET} \
+    --without-included-regex
+
+  make -j${THREADS}
+  make install
+}
+
+function build {
+  ./configure \
+    --prefix=/usr \
+    --bindir=/bin
+
+  make -j${THREADS}
+  make install
+}

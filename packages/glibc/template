@@ -1,0 +1,99 @@
+pkgname=glibc
+version=2.28
+revision=1
+download=https://ftp.gnu.org/gnu/glibc/glibc-${version}.tar.xz
+
+function cross-compiler {
+  mkdir ../glibc-build
+  cd ../glibc-build
+
+  BUILD_CC="gcc" \
+  CC="${CLFS_TARGET}-gcc" \
+  AR="${CLFS_TARGET}-ar" \
+  RANLIB="${CLFS_TARGET}-ranlib" \
+  ../glibc-$version/configure \
+    --prefix=/tools \
+    --host=${CLFS_TARGET} \
+    --build=${CLFS_HOST} \
+    --enable-kernel=3.12.0 \
+    --with-binutils=/cross-tools/bin \
+    --with-headers=/tools/include \
+    --enable-obsolete-rpc
+
+  make -j${THREADS}
+  make install
+}
+
+function build {
+
+  LINKER=$(readelf -l /tools/bin/bash | sed -n 's@.*interpret.*/tools\(.*\)]$@\1@p')
+  sed -i "s|libs -o|libs -L/usr/lib -Wl,-dynamic-linker=${LINKER} -o|" scripts/test-installation.pl
+  unset LINKER
+
+  mkdir ../glibc-build
+  cd ../glibc-build
+
+  ../glibc-$version/configure \
+    --prefix=/usr \
+    --enable-kernel=3.12.0 \
+    --libexecdir=/usr/lib/glibc \
+    --enable-stack-protector=no \
+    --enable-obsolete-rpc
+
+  make -j${THREADS}
+
+  touch /etc/ld.so.conf
+
+  sed '/test-installation/s@$(PERL)@echo not running@' -i ../glibc-$version/Makefile
+
+  make install &&
+  rm /usr/include/rpcsvc/*.x
+
+  cp ../glibc-$version/nscd/nscd.conf /etc/nscd.conf
+  mkdir -p /var/cache/nscd
+
+  install -Dm644 ../glibc-$version/nscd/nscd.tmpfiles /usr/lib/tmpfiles.d/nscd.conf
+  install -Dm644 ../glibc-$version/nscd/nscd.service /lib/systemd/system/nscd.service
+
+  mkdir -p /usr/lib/locale
+  localedef -i cs_CZ -f UTF-8 cs_CZ.UTF-8
+  localedef -i de_DE -f ISO-8859-1 de_DE
+  localedef -i de_DE@euro -f ISO-8859-15 de_DE@euro
+  localedef -i en_HK -f ISO-8859-1 en_HK
+  localedef -i en_PH -f ISO-8859-1 en_PH
+  localedef -i en_US -f ISO-8859-1 en_US
+  localedef -i es_MX -f ISO-8859-1 es_MX
+  localedef -i fa_IR -f UTF-8 fa_IR
+  localedef -i fr_FR -f ISO-8859-1 fr_FR
+  localedef -i fr_FR@euro -f ISO-8859-15 fr_FR@euro
+  localedef -i it_IT -f ISO-8859-1 it_IT
+  localedef -i ja_JP -f EUC-JP ja_JP
+
+cat > /etc/nsswitch.conf << "END"
+# Begin /etc/nsswitch.conf
+
+passwd: files
+group: files
+shadow: files
+
+hosts: files dns
+networks: files
+
+protocols: files
+services: files
+ethers: files
+rpc: files
+
+# End /etc/nsswitch.conf
+END
+
+cat > /etc/ld.so.conf << "END"
+# Begin /etc/ld.so.conf
+
+/usr/local/lib
+/opt/lib
+
+# End /etc/ld.so.conf
+END
+
+}

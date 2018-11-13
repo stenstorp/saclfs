@@ -1,0 +1,13 @@
+#!/bin/bash
+source ./info
+
+mkdir -p ${CLFS}
+
+install -dv ${CLFS}/tools
+ln -sv ${CLFS}/tools /
+
+install -dv ${CLFS}/cross-tools
+ln -sv ${CLFS}/cross-tools /
+
+chown $USER ${CLFS}/tools
+chown $USER ${CLFS}/cross-tools

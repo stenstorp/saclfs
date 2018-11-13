@@ -1,0 +1,11 @@
+pkgname=libxml2
+version=2.9.8
+revision=1
+download=http://xmlsoft.org/sources/libxml2-$version.tar.gz
+
+function build {
+  ./configure --prefix=/usr --disable-static --with-history
+
+  make -j${THREADS}
+  make install
+}

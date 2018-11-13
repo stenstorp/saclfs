@@ -1,0 +1,43 @@
+pkgname=kmod
+version=25
+revision=1
+download=https://mirrors.edge.kernel.org/pub/linux/utils/kernel/kmod/kmod-${version}.tar.xz
+
+function cross {
+  cp -v libkmod/libkmod.c{,.orig}
+  sed '/dirname_default_prefix /s@/lib/modules@/tools&@' \
+    libkmod/libkmod.c.orig > libkmod/libkmod.c
+
+  ./configure \
+    --prefix=/tools \
+    --build=${CLFS_HOST} \
+    --host=${CLFS_TARGET} \
+    --with-xz \
+    --with-zlib
+
+  make -j${THREADS}
+  make install
+
+  ln -sfv kmod /tools/bin/lsmod
+  for tool in depmod insmod modprobe modinfo rmmod; do
+      ln -sv ../bin/kmod /tools/sbin/${tool}
+  done
+}
+
+function build {
+  ./configure \
+    --prefix=/usr \
+    --bindir=/bin \
+    --sysconfdir=/etc \
+    --with-rootlibdir=/lib \
+    --with-zlib \
+    --with-xz
+
+  make -j${THREADS}
+  make install
+
+  ln -sf kmod /bin/lsmod
+  for tool in depmod insmod modinfo modprobe rmmod; do
+    ln -sf ../bin/kmod /sbin/${tool}
+  done
+}

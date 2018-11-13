@@ -1,0 +1,10 @@
+pkgname=XML-Parser
+version=2.44_01
+revision=1
+download=https://cpan.metacpan.org/authors/id/T/TO/TODDR/XML-Parser-${version}.tar.gz
+
+function build {
+  perl Makefile.PL
+  make -j${THREADS}
+  make install
+}

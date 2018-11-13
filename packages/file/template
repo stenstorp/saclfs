@@ -1,0 +1,30 @@
+pkgname=file
+version=5.35
+revision=1
+download=ftp://ftp.astron.com/pub/file/file-${version}.tar.gz
+
+function cross-compiler {
+  ./configure \
+    --prefix=/cross-tools
+
+  make -j${TREADS}
+  make install
+}
+
+function cross {
+  ./configure \
+    --prefix=/tools \
+    --build=${CLFS_HOST} \
+    --host=${CLFS_TARGET}
+
+  make -j${THREADS}
+  make install
+}
+
+function build {
+  ./configure \
+    --prefix=/usr
+
+  make -j${THREADS}
+  make install
+}

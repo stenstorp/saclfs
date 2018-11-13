@@ -1,0 +1,9 @@
+pkgname=iana-etc
+version=2.30
+revision=1
+download=http://sethwklein.net/iana-etc-${version}.tar.bz2
+
+function build {
+  make
+  make install
+}

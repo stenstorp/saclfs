@@ -1,0 +1,69 @@
+--- SCRIPTS ---
+
+          bob - Package builder
+  buildrootfs - Creates a compressed root filesystem for booting on target machine (combines makedirs and compress)
+     cleanall - Removes all built software, logs, root filesystem. USE ONLY WHEN SURE YOU WANT TO REMOVE EVERYTHING YOU HAVE BUILT!!!
+     compress - Compresses the built root filesystem to be extracted on target machine
+     makedirs - Creates FHS compliant directories, essential symlinks and files
+    post-base - Strip debug symbols and makes neccesary files
+         prep - Prepares build directory and creates symlinks
+    reset-all - Runs cleanall then prep
+     semiauto - Resets everything, builds everything and compresses root filesystem (combines reset-all, bob build cross-compiler, bob build cross-system and buildrootfs)
+version-check - Clfs dependency version checker
+
+--- FILES ---
+
+deps - some dependencies
+info - environment variables
+
+--- FOLDERS ---
+
+    logs - logs of builds
+packages - instructions for bob to build packages
+ sources - source archives for packages
+    work - where packages are compiled
+    clfs - root filesystem for clfs
+
+--- GENERAL INSTRUCTIONS ---
+
+Tip: To avoid permission isses, run all scripts with su/sudo or as root
+
+1: Run ./prep to make essential directories
+2: Run ./bob build cross-compiler to build the cross compiler
+3: Run ./bob build cross-system to build a bootable system
+3.5: Check the logs in the logs directory for errors
+4: Run ./buildrootfs to make a compressed root filesystem
+4.5: Instead of steps 1-4 run ./semiauto if you are sure there are no errors
+5: Transfer to compressed root filesystem to the target system
+6: On the target system WITH A PRE-EXISTING LINUX SYSTEM WITH YABOOT INSTALLED, extract the root filesystem to an empty partition.
+7: Reboot the system.
+8: At yaboot, select 'l' for linux and at the boot prompt, type "hd:X,/tools/boot/vmlinux-VER root=/dev/sdYX" Where X is the partition number, Y is the drive and VER is the kernel version (currently 4.19.1)
+9: After it has booted login as "root" (no password) and cd to builder
+10: Run ./bob build base-system to build all system software. THIS WILL TAKE A LONG TIME, > 10 HOURS
+10.5: Check the logs in the logs directory for errors
+11: Run ./post-base to strip debug symbols and make neccesary files
+12: Edit the /etc/fstab file and add your root filesystem otherwise it will default to a read-only state. E.g "/dev/sda4 / ext4 defaults 0 0"
+13: Reboot the system.
+14: At yaboot, select 'l' for linux and at the boot prompt, type "hd:X,/boot/vmlinux-VER root=/dev/sdYX" Where X is the partition number, Y is the drive and VER is the kernel version (currently 4.19.1)
+15: You should have a working system!!
+
+--- NOTABLE CHANGES FROM CLFS ---
+
+- Many packages are later versions than specified in clfs
+- Many upstream patches not applied as lastest versions of software is used
+- Some powerpc specific patches applied as well as patches to fix other software packages
+- Added libffi, python3, libxml2, libxslt, docbook-xml, docbook-xsl, meson and ninja as systemd now depends on them
+- Systemd builds with ninja and meson
+- Removed yaboot as I can't get it to build
+- Custom kernel configuration based off of pmac32_defconfig with added filesystem compatibility and other options to support systemd
+
+--- TODO ---
+
+- Extend kernel configuration
+- Fail package building properly
+- Implement dependency resolution
+- Implement basic packaging system?
+
+--- KNOWN ISSUES ---
+
+- Binutils fails when building with bob on target system. To build successfully, cd to "work/binutils/[version]/binutils-build" and run "make && make install".

@@ -1,0 +1,25 @@
+pkgname=eudev
+version=3.2.7
+revision=1
+download=https://dev.gentoo.org/~blueness/eudev/eudev-${version}.tar.gz
+
+function cross {
+  ./configure \
+    --prefix=/tools \
+    --build=${CLFS_HOST} \
+    --host=${CLFS_TARGET} \
+    --disable-introspection \
+    --disable-gtk-doc-html \
+    --disable-gudev \
+    --disable-keymap \
+    --with-firmware-path=/tools/lib/firmware \
+    --enable-libkmod
+
+  make -j${THREADS}
+  make install
+
+  install -d /tools/lib/firmware
+
+  echo "# dummy, so that network is once again on eth*" > \
+    /tools/etc/udev/rules.d/80-net-name-slot.rules
+}

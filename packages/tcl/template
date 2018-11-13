@@ -1,0 +1,16 @@
+pkgname=tcl
+version=8.6.4
+revision=1
+download=https://sourceforge.net/projects/tcl/files/Tcl/${version}/tcl-core${version}-src.tar.gz
+extractdir=tcl$version
+
+function testtools {
+  cd unix
+  ./configure \
+    --prefix=/tools
+
+  make -j${THREADS}
+  make install
+  make install-private-headers
+  ln -sv tclsh$(echo $version | cut -d . -f 1,2) /tools/bin/tclsh
+}

@@ -1,0 +1,20 @@
+pkgname=kbd
+version=2.0.4
+revision=1
+download=https://mirrors.edge.kernel.org/pub/linux/utils/kbd/kbd-${version}.tar.xz
+
+function build {
+  PKG_CONFIG_PATH="/tools/lib/pkgconfig" \
+  ./configure \
+    --prefix=/usr \
+    --disable-vlock \
+    --enable-optional-progs
+
+  make -j${THREADS}
+  make install
+
+  mv /usr/bin/{loadkeys,setfont} /bin
+
+  mkdir /usr/share/doc/kbd-$version
+  cp -R docs/doc/* /usr/share/doc/kbd-$version
+}

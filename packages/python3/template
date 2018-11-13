@@ -1,0 +1,26 @@
+pkgname=python3
+version=3.7.1
+revision=1
+download=https://www.python.org/ftp/python/$version/Python-$version.tar.xz
+extractdir=Python-$version
+
+function build {
+  ./configure --prefix=/usr \
+    --enable-shared \
+    --with-system-expat \
+    --with-system-ffi \
+    --with-ensurepip=yes
+
+  make -j${THEADS}
+  make install
+  chmod -v 755 /usr/lib/libpython3.7m.so
+  chmod -v 755 /usr/lib/libpython3.so
+
+  install -v -dm755 /usr/share/doc/python-$version/html 
+
+  tar --strip-components=1 \
+    --no-same-owner \
+    --no-same-permissions \
+    -C /usr/share/doc/python-$version/html \
+    -xvf ../python-$version-docs-html.tar.bz2
+}

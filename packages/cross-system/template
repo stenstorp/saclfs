@@ -1,0 +1,44 @@
+name=cross-system
+revision=1
+meta=yes
+
+function build {
+  cd ${BUILD_ROOT}
+  ./bob cross gmp
+  ./bob	cross mpfr
+  ./bob	cross mpc
+  ./bob	cross isl
+  ./bob	cross zlib
+  ./bob	cross binutils
+  ./bob	cross gcc
+  ./bob	cross ncurses
+  ./bob	cross bash
+  ./bob	cross bzip2
+  ./bob	cross check
+  ./bob	cross coreutils
+  ./bob	cross diffutils
+  ./bob	cross file
+  ./bob	cross findutils
+  ./bob	cross gawk
+  ./bob	cross gettext
+  ./bob	cross grep
+  ./bob cross gzip
+  ./bob	cross make
+  ./bob	cross patch
+  ./bob	cross sed
+  ./bob	cross tar
+  ./bob	cross texinfo
+  ./bob	cross util-linux
+  ./bob	cross vim
+  ./bob	cross xz
+  ./bob	cross bc
+  ./bob	cross boot-scripts-cross-lfs
+  ./bob	cross e2fsprogs
+  ./bob	cross kmod
+  ./bob	cross shadow
+  ./bob	cross sysvinit
+  ./bob	cross eudev
+  ./bob	cross linux
+  ./bob	cross hfsutils
+  ./bob cross powerpc-utils
+}

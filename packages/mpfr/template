@@ -1,0 +1,39 @@
+pkgname=mpfr
+version=4.0.1
+revision=1
+download=https://www.mpfr.org/mpfr-current/mpfr-${version}.tar.xz
+
+function cross-compiler {
+  LDFLAGS="-Wl,-rpath,/cross-tools/lib" \
+  ./configure \
+    --prefix=/cross-tools \
+    --disable-static \
+    --with-gmp=/cross-tools
+
+  make -j${THREADS}
+  make install
+}
+
+function cross {
+  ./configure \
+    --prefix=/tools \
+    --build=${CLFS_HOST} \
+    --host=${CLFS_TARGET}
+
+  make -j${THREADS}
+  make install
+}
+
+function build {
+  CC="gcc -isystem /usr/include" \
+  LDFLAGS="-Wl,-rpath-link,/usr/lib:/lib" \
+  ./configure \
+    --prefix=/usr \
+    --with-gmp=/usr \
+    --docdir=/usr/share/doc/mpfr-$version
+
+  make -j${THREADS}
+  make -j${THREADS} html
+  make install
+  make install-html
+}

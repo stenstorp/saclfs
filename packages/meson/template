@@ -1,0 +1,10 @@
+pkgname=meson
+version=0.48.2
+revision=1
+download=https://github.com/mesonbuild/meson/archive/$version.tar.gz
+
+function build {
+  python3 setup.py build
+  python3 setup.py install --root=dest
+  cp -rv dest/* /
+}

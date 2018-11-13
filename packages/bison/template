@@ -1,0 +1,13 @@
+pkgname=bison
+version=3.2
+revision=1
+download=https://ftp.gnu.org/gnu/bison/bison-${version}.tar.xz
+
+function build {
+  ./configure \
+        --prefix=/usr \
+        --docdir=/usr/share/doc/bison-$version
+
+  make -j${THREADS}
+  make install
+}

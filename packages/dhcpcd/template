@@ -1,0 +1,30 @@
+pkgname=dhcpcd
+version=7.0.8
+revision=1
+download=https://roy.marples.name/downloads/dhcpcd/dhcpcd-${version}.tar.xz
+
+function build {
+  ./configure \
+    --prefix=/usr \
+    --sbindir=/sbin \
+    --sysconfdir=/etc \
+    --dbdir=/var/lib/dhcpcd \
+    --libexecdir=/usr/lib/dhcpcd
+
+  make -j${THREADS}
+  make install
+
+cd /etc &&
+cat > dhcpcd.conf << "END"
+# dhcpcd configuration eth0 interface
+# See dhcpcd.conf(5) for details.
+
+interface eth0
+# dhcpcd-run-hooks uses these options.
+option subnet_mask, routers, domain_name_servers
+
+# The default timeout for waiting for a DHCP response is 30 seconds
+# which may be too long or too short and can be changed here.
+timeout 16
+END
+}

@@ -1,0 +1,18 @@
+set +h
+umask 022
+
+export BUILD_ROOT=$(pwd)
+export CLFS=${BUILD_ROOT}/clfs
+export CLFS_SOURCES=${BUILD_ROOT}/sources
+export CLFS_PACKAGES=${BUILD_ROOT}/packages
+export CLFS_WORK=${BUILD_ROOT}/work
+
+export LC_ALL=POSIX
+export PATH=/cross-tools/bin:$PATH
+
+unset CFLAGS CXXFLAGS PKG_CONFIG_PATH
+
+export CLFS_HOST=$(echo ${MACHTYPE} | sed -e 's/-[^-]*/-cross/')
+export CLFS_TARGET="powerpc-unknown-linux-gnu"
+export CLFS_ARCH="powerpc"
+export THREADS=$(nproc)

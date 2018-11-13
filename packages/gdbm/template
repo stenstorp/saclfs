@@ -1,0 +1,13 @@
+pkgname=gdbm
+version=1.18.1
+revision=1
+download=https://ftp.gnu.org/gnu/gdbm/gdbm-${version}.tar.gz
+
+function build {
+  ./configure \
+    --prefix=/usr \
+    --enable-libgdbm-compat
+
+  make -j${THEADS}
+  make install
+}

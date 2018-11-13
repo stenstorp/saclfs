@@ -1,0 +1,40 @@
+pkgname=perl
+version=5.28.0
+revision=1
+download=https://www.cpan.org/src/$(echo $version | cut -b 1).0/perl-${version}.tar.gz
+
+function build {
+  export BUILD_ZLIB=False
+  export BUILD_BZIP2=0
+
+  ip link set lo up
+
+  echo "127.0.0.1 localhost $(hostname)" > /etc/hosts
+
+  ./configure.gnu \
+    --prefix=/usr \
+    -Dvendorprefix=/usr \
+    -Dman1dir=/usr/share/man/man1 \
+    -Dman3dir=/usr/share/man/man3 \
+    -Dpager="/bin/less -isR" \
+    -Dusethreads \
+    -Duseshrplib
+
+  make -j${THREADS}
+  make install
+
+  unset BUILD_ZLIB BUILD_BZIP2
+}
+
+function testtools {
+  sed -i 's@/usr/include@/tools/include@g' ext/Errno/Errno_pm.PL
+
+  ./configure.gnu \
+    --prefix=/tools \
+    -Dcc="gcc"
+
+  make -j${THREADS}
+  make install
+
+  ln -sfv /tools/bin/perl /usr/bin
+}

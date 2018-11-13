@@ -1,0 +1,41 @@
+pkgname=gmp
+version=6.1.2
+revision=1
+download=https://ftp.gnu.org/gnu/gmp/gmp-${version}.tar.xz
+
+function cross-compiler {
+  ./configure \
+    --prefix=/cross-tools \
+    --enable-cxx \
+    --disable-static
+
+  make -j${THREADS}
+  make install
+}
+
+function cross {
+  CC_FOR_BUILD=gcc \
+  ./configure \
+    --prefix=/tools \
+    --build=${CLFS_HOST} \
+    --host=${CLFS_TARGET} \
+    --enable-cxx
+
+  make -j${THREADS}
+  make install
+}
+
+function build {
+  CC="gcc -isystem /usr/include" \
+  CXX="g++ -isystem /usr/include" \
+  LDFLAGS="-Wl,-rpath-link,/usr/lib:/lib" \
+  ./configure \
+    --prefix=/usr \
+    --enable-cxx \
+    --docdir=/usr/share/doc/gmp-$version
+
+  make -j${THREADS}
+  make -j${THREADS} html
+  make install
+  make install-html
+}

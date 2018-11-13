@@ -1,0 +1,22 @@
+pkgname=dbus
+version=1.13.6
+revision=1
+download=https://dbus.freedesktop.org/releases/dbus/dbus-${version}.tar.gz 
+
+function build {
+  ./configure \
+    --prefix=/usr \
+    --sysconfdir=/etc \
+    --libexecdir=/usr/lib/dbus-1.0 \
+    --localstatedir=/var \
+    --with-systemdsystemunitdir=/lib/systemd/system \
+    --docdir=/usr/share/doc/dbus-$version
+
+  make -j${THREADS}
+  make install
+
+  mv /usr/lib/libdbus-1.so.* /lib
+  ln -sf ../../lib/$(readlink /usr/lib/libdbus-1.so) /usr/lib/libdbus-1.so
+
+  ln -s /etc/machine-id /var/lib/dbus
+}

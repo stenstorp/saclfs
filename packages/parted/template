@@ -1,0 +1,14 @@
+pkgname=parted
+version=3.2
+revision=1
+download=https://ftp.gnu.org/gnu/parted/parted-${version}.tar.xz
+patches=device-mapper.patch,sysmacros.patch
+
+function build {
+  ./configure \
+    --prefix=/usr \
+    --disable-device-mapper
+
+  make -j${THREADS}
+  make install
+}

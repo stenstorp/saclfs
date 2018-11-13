@@ -1,0 +1,69 @@
+pkgname=binutils
+version=2.31.1
+revision=1
+download=https://ftp.gnu.org/gnu/binutils/binutils-${version}.tar.xz
+
+function cross-compiler {
+  mkdir ../binutils-build
+  cd ../binutils-build
+
+  AR=ar AS=as \
+  ../binutils-$version/configure \
+    --prefix=/cross-tools \
+    --host=${CLFS_HOST} \
+    --target=${CLFS_TARGET} \
+    --with-sysroot=${CLFS} \
+    --with-lib-path=/tools/lib \
+    --disable-nls \
+    --disable-static \
+    --disable-multilib \
+    --enable-gold=yes \
+    --enable-plugins \
+    --enable-threads \
+    --disable-werror
+
+  make -j${THREADS}
+  make install
+}
+
+function cross {
+  mkdir ../binutils-build
+  cd ../binutils-build
+
+  ../binutils-$version/configure \
+    --prefix=/tools \
+    --build=${CLFS_HOST} \
+    --host=${CLFS_TARGET} \
+    --target=${CLFS_TARGET} \
+    --with-lib-path=/tools/lib \
+    --disable-nls \
+    --enable-shared \
+    --disable-multilib \
+    --enable-gold=yes \
+    --enable-plugins \
+    --with-system-zlib \
+    --enable-threads
+
+  make -j${THREADS}
+  make install
+}
+
+function build {
+  expect -c "spawn ls"
+
+  mkdir ../binutils-build
+  cd ../binutils-build
+
+  CC="gcc -isystem /usr/include" \
+  LDFLAGS="-Wl,-rpath-link,/usr/lib:/lib" \
+  ../binutils-$version/configure \
+    --prefix=/usr \
+    --enable-shared \
+    --enable-gold=yes \
+    --enable-plugins \
+    --with-system-zlib \
+    --enable-threads
+
+  make -j${THREADS} tooldir=/usr
+  make tooldir=/usr install
+}

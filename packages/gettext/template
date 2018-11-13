@@ -1,0 +1,30 @@
+pkgname=gettext
+version=0.19.8
+revision=1
+download=https://ftp.gnu.org/pub/gnu/gettext/gettext-${version}.tar.xz
+
+function cross {
+  cd gettext-tools
+
+  EMACS="no" \
+  ./configure \
+    --prefix=/tools \
+    --build=${CLFS_HOST} \
+    --host=${CLFS_TARGET} \
+    --disable-shared
+
+  make -j${THREADS} -C gnulib-lib
+  make -j${THREADS} -C intl pluralx.c
+  make -j${THREADS} -C src msgfmt msgmerge xgettext
+
+  cp -v src/{msgfmt,msgmerge,xgettext} /tools/bin
+}
+
+function build {
+  ./configure \
+    --prefix=/usr \
+    --docdir=/usr/share/doc/gettext-$version
+
+  make -j${THREADS}
+  make install
+}

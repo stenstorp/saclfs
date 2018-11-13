@@ -1,0 +1,29 @@
+pkgname=bzip2
+version=1.0.6
+revision=1
+download=https://fossies.org/linux/misc/bzip2-${version}.tar.xz
+
+function cross {
+  cp Makefile{,.orig}
+  sed -e '/^all/s/ test$//' Makefile.orig > Makefile
+  make -j${THREADS} CC="${CC}" AR="${AR}" RANLIB="${RANLIB}"
+  make PREFIX=/tools install
+}
+
+function build {
+  sed -i -e 's:ln -s -f $(PREFIX)/bin/:ln -s :' Makefile
+  sed -i 's@X)/man@X)/share/man@g' ./Makefile
+
+  make -f Makefile-libbz2_so
+  make clean
+
+  make -j${THREADS}
+  make PREFIX=/usr install
+
+  cp bzip2-shared /bin/bzip2
+  cp -a libbz2.so* /lib
+  ln -s ../../lib/libbz2.so.1.0 /usr/lib/libbz2.so
+  rm /usr/bin/{bunzip2,bzcat,bzip2}
+  ln -s bzip2 /bin/bunzip2
+  ln -s bzip2 /bin/bzcat
+}

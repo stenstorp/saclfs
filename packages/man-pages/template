@@ -1,0 +1,8 @@
+pkgname=man-pages
+version=4.16
+revision=1
+download=https://mirrors.edge.kernel.org/pub/linux/docs/man-pages/man-pages-${version}.tar.xz
+
+function build {
+  make install
+}

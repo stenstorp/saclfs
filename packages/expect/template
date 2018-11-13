@@ -1,0 +1,15 @@
+pkgname=expect
+version=5.45.4
+revision=1
+download=https://sourceforge.net/projects/expect/files/Expect/${version}/expect${version}.tar.gz
+extractdir=expect$version
+
+function testtools {
+  ./configure \
+    --prefix=/tools \
+    --with-tcl=/tools/lib \
+    --with-tclinclude=/tools/include
+
+  make -j${THREADS}
+  make SCRIPTS="" install
+}

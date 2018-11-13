@@ -1,0 +1,14 @@
+pkgname=libcap
+version=2.26
+revision=1
+download=https://git.kernel.org/pub/scm/libs/libcap/libcap.git/snapshot/libcap-${version}.tar.gz
+
+function build {
+  make -j${THREADS}
+
+  make RAISE_SETFCAP=no install
+  chmod 755 /lib/libcap.so.$version
+  ln -sf ../../lib/$(readlink /lib/libcap.so) /usr/lib/libcap.so
+  rm /lib/libcap.so
+  mv /lib/libcap.a /usr/lib
+}

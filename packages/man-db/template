@@ -1,0 +1,22 @@
+pkgname=man-db
+version=2.8.4
+revision=1
+download=http://download.savannah.nongnu.org/releases/man-db/man-db-${version}.tar.xz
+
+function build {
+  ./configure \
+    --prefix=/usr \
+    --libexecdir=/usr/lib \
+    --docdir=/usr/share/doc/man-db-$version \
+    --sysconfdir=/etc \
+    --disable-setuid \
+    --enable-cache-owner=bin \
+    --with-browser=/usr/bin/lynx \
+    --with-vgrind=/usr/bin/vgrind \
+    --with-grap=/usr/bin/grap
+
+  make -j${THREADS}
+  make install
+
+ sed -i "s:man man:root root:g" /usr/lib/tmpfiles.d/man-db.conf
+}

@@ -1,0 +1,40 @@
+pkgname=mpc
+version=1.1.0
+revision=1
+download=https://ftp.gnu.org/gnu/mpc/mpc-${version}.tar.gz
+
+function cross-compiler {
+  LDFLAGS="-Wl,-rpath,/cross-tools/lib" \
+  ./configure \
+    --prefix=/cross-tools \
+    --disable-static \
+    --with-gmp=/cross-tools \
+    --with-mpfr=/cross-tools
+
+  make -j${THREADS}
+  make install
+}
+
+function cross {
+  ./configure \
+    --prefix=/tools \
+    --build=${CLFS_HOST} \
+    --host=${CLFS_TARGET}
+
+  make -j${THREADS}
+  make install
+}
+
+function build {
+  CC="gcc -isystem /usr/include" \
+  LDFLAGS="-Wl,-rpath-link,/usr/lib:/lib" \
+  ./configure \
+    --prefix=/usr \
+    --docdir=/usr/share/doc/mpc-$version
+
+  make -j${THREADS}
+  make -j${THREADS} html
+  make install
+  make install-html
+}
+

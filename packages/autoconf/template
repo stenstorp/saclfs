@@ -1,0 +1,12 @@
+pkgname=autoconf
+version=2.69
+revision=1
+download=https://ftp.gnu.org/gnu/autoconf/autoconf-${version}.tar.xz
+
+function build {
+  ./configure \
+    --prefix=/usr
+
+  make -j${THREADS}
+  make install
+}

@@ -1,0 +1,15 @@
+pkgname=iproute2
+version=4.9.0
+revision=1
+download=https://mirrors.edge.kernel.org/pub/linux/utils/net/iproute2/iproute2-${version}.tar.xz
+patches=stdint.patch
+
+function build {
+  sed -i '/ARPD/d' Makefile
+  sed -i 's/arpd.8//' man/man8/Makefile
+  sed -i '/tc-simple/s@tc-skbmod.8 @@' man/man8/Makefile
+  rm doc/arpd.sgml
+
+  make -j${THREADS}
+  make DOCDIR=/usr/share/doc/iproute2-$version install
+}
