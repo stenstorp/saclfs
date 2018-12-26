@@ -1,5 +1,5 @@
 pkgname=linux
-version=4.19.1
+version=4.14.90
 revision=1
 download=https://cdn.kernel.org/pub/linux/kernel/v$(echo $version | cut -b 1).x/linux-${version}.tar.xz 
 
