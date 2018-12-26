@@ -23,4 +23,7 @@ function build {
     --no-same-permissions \
     -C /usr/share/doc/python-$version/html \
     -xvf ../python-$version-docs-html.tar.bz2
+
+  cd /usr/bin
+  ln -s python3 python
 }
