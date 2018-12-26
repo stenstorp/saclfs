@@ -95,6 +95,3 @@ LC_ALL=POSIX
 PATH=/bin:/usr/bin:/sbin:/usr/sbin:/tools/bin:/tools/sbin
 export LC_ALL PATH PS1
 EOF
-
-chown -Rv 0:0 ${CLFS}/tools
-chown -Rv 0:0 ${CLFS}/cross-tools

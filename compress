@@ -3,6 +3,10 @@ source ./info
 
 echo Creating Backup
 cp -a ${CLFS} ${CLFS}-BAK
+
+chown -Rv 0:0 ${CLFS}/tools
+chown -Rv 0:0 ${CLFS}/cross-tools
+
 mkdir -p ${CLFS}/root/builder/{packages,sources}
 echo Copying Packages
 cp -a ${CLFS_PACKAGES} ${CLFS}/root/builder/
